@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: tedarator
+  datasource:
+    url: jdbc:mysql://localhost:3306/${MYSQL_TABLE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show_sql: true
