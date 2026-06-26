@@ -1,5 +1,9 @@
 package com.backstone.tedarator.domain.parsing.json;
 
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import lombok.Builder;
+
 /**
  * 특정 엔티티에 대한 한 필드 세부 정보를 담은 메타데이터
  * <br> {@link ReferenceTargetJson}에서 사용된다.
@@ -19,4 +23,16 @@ public record EntityFiledJson(
         ReferenceTargetJson referenceTarget,
         ConstraintsJson constraints
 ) {
+    public static EntityFiledJson of(
+            FieldDeclaration field
+    ){
+        VariableDeclarator variableDeclarator = field.getVariable(0);
+        String name = variableDeclarator.getNameAsString();
+        String type = variableDeclarator.getTypeAsString();
+        Boolean isPrimary = variableDeclarator.getInitializer().isPresent();
+        Boolean isForeign = false;
+        ReferenceTargetJson referenceTarget = null;
+        ConstraintsJson constraints = new ConstraintsJson(true, false, null, null, null, null);
+        return new EntityFiledJson(name, type, isPrimary, isForeign, referenceTarget, constraints);
+    }
 }
