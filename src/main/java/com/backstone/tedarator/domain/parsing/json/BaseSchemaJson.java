@@ -10,6 +10,6 @@ import java.util.List;
  */
 public record BaseSchemaJson(
         String entityName,
-        List<EntityFiledJson> entityFields
+        List<EntityFieldJson> entityFields
 ) {
 }
