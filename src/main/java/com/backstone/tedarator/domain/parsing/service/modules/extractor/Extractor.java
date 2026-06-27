@@ -4,16 +4,34 @@ import com.backstone.tedarator.domain.parsing.service.modules.snapshot.Annotatio
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
 /**
- * <H1>어노테이션 별, 제약 설정 값 추출기</H1>
- * {@Code supports} : 타겟 어노테이션이 해당 추출기가 사용되는지 여부 판별
- * {@Code extract} : 타겟 어노테이션으로부터 추출한 값을 반환
+ * <h1>어노테이션 기반 제약 조건 추출기 (Extractor)</h1>
+ * <p>각 어노테이션(예: {@code @Column}, {@code @Min} 등)으로부터 실제 데이터베이스 제약 설정값을 파싱하여
+ * {@link AnnotationSnapshot} 형태로 캡슐화하는 공통 인터페이스입니다.</p>
+ * <h2>! 사용 전 주의 사항 !</h2>
+ * <ul>
+ * <li>{@code isPrimary} 파라미터는 <strong>반드시 실제 {@code @Id} 어노테이션의 존재 여부</strong>로만 판단해 넘겨야 합니다.</li>
+ * <li>필드 이름이 단순히 "id"인 경우는 주키(PK) 조건 충족으로 인정하지 않으므로 주의하십시오.</li>
+ * </ul>
+ * <h2>메서드 상세 설명</h2>
+ * <ul>
+ * <li>{@code supports} : 현재 타겟 어노테이션 혹은 주키 조건이 해당 추출기에서 처리 가능한 대상인지 판별합니다.</li>
+ * <li>{@code extract} : 타겟 어노테이션의 속성을 분석하여 규격화된 제약 설정값 스냅샷을 반환합니다.</li>
+ * </ul>
  */
 public interface Extractor {
     default boolean supports(AnnotationExpr annotation) {
         return false;
     }
+
     default boolean supports(AnnotationExpr annotation, boolean isPrimary) {
         return false;
     }
-    AnnotationSnapshot<?> extract(AnnotationExpr annotation);
+
+    default AnnotationSnapshot<?> extract(AnnotationExpr annotation) {
+        return null;
+    }
+
+    default AnnotationSnapshot<?> extract(AnnotationExpr annotation, boolean isPrimary) {
+        return null;
+    }
 }
