@@ -1,6 +1,4 @@
-package com.backstone.tedarator.domain.parsing.service.modules.annotations.snapshot;
-
-import com.backstone.tedarator.domain.parsing.service.modules.constraint.ConstraintType;
+package com.backstone.tedarator.domain.parsing.service.modules.snapshot;
 
 /**
  * <H1>어노테이션 스냅샷</H1>

@@ -1,4 +1,4 @@
-package com.backstone.tedarator.domain.parsing.service.modules.constraint;
+package com.backstone.tedarator.domain.parsing.service.modules.snapshot;
 
 import lombok.Getter;
 

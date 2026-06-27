@@ -1,6 +1,6 @@
-package com.backstone.tedarator.domain.parsing.service.modules.annotations.extractor;
+package com.backstone.tedarator.domain.parsing.service.modules.extractor;
 
-import com.backstone.tedarator.domain.parsing.service.modules.annotations.snapshot.AnnotationSnapshot;
+import com.backstone.tedarator.domain.parsing.service.modules.snapshot.AnnotationSnapshot;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
 /**
