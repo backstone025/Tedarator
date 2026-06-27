@@ -17,6 +17,10 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
  * <li>{@code supports} : 현재 타겟 어노테이션 혹은 주키 조건이 해당 추출기에서 처리 가능한 대상인지 판별합니다.</li>
  * <li>{@code extract} : 타겟 어노테이션의 속성을 분석하여 규격화된 제약 설정값 스냅샷을 반환합니다.</li>
  * </ul>
+ * <h2>모듈 클래스 명칭 규칙</h2>
+ * <h3>[어노테이션]+[속성]+"Extractor"</h3>
+ * <p>ex) {@code @Column(length = 10)}</p>
+ * <p>-> {@code ColumnLengthExtractor}</p>
  */
 public interface Extractor {
     default boolean supports(AnnotationExpr annotation) {
