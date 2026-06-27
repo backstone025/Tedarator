@@ -13,13 +13,9 @@ import lombok.RequiredArgsConstructor;
  * <H1>EntityFieldJson 팩토리 엔진</H1>
  * <H2>사용 전제</H2>
  * <p>- 한 줄에 무조건 하나의 필드만 선언한다.(int width, height -> 이렇게 작성 안됨)</p>
- * <p>- min, max value는 <b>@Min</b>, <b>@Max</b>만 고려한다.</p>
- * <p>- min, max value는 정수형만 다루는걸 고려한다.</p>
- * <p>- min, max length는<b>@Size</b>만 고려한다. </p>
  */
 @RequiredArgsConstructor
 public class FieldJsonFactoryEngine {
-    final ConstraintsPolicy constraintsPolicy;
 
     public EntityFieldJson generateEntityFieldJson(FieldDeclaration field) {
         VariableDeclarator variableDeclarator = field.getVariable(0);
@@ -39,18 +35,18 @@ public class FieldJsonFactoryEngine {
 
         // [제약 사항들 판별]
         // nullable
-        Boolean nullable = constraintsPolicy.nullablePolicy(field, isPrimary);
+        Boolean nullable = null;
 
         // unique
-        Boolean isUnique = constraintsPolicy.uniquePolicy(field, isPrimary);
+        Boolean isUnique = null;
 
         // min, max value
-        Integer minValue = constraintsPolicy.minValuePolicy(field);
-        Integer maxValue = constraintsPolicy.maxValuePolicy(field);
+        Integer minValue = null;
+        Integer maxValue = null;
 
         // min, max length
-        Integer minLength = constraintsPolicy.minLengthPolicy(field);
-        Integer maxLength = constraintsPolicy.maxLengthPolicy(field);
+        Integer minLength = null;
+        Integer maxLength = null;
 
         // 제약 사항 묶기
         ConstraintsJson constraints = new ConstraintsJson(nullable, isUnique, minValue, maxValue, minLength, maxLength);
