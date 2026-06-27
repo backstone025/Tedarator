@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-public class UniqueExtractor implements Extractor {
+public class ColumnNullableExtractor implements Extractor {
     @Override
     public boolean supports(AnnotationExpr annotation, boolean isPrimary) {
         // 상황 1. 해당 필드가 PK일 경우 무조건 true 반환
@@ -21,33 +21,33 @@ public class UniqueExtractor implements Extractor {
 
     @Override
     public AnnotationSnapshot<?> extract(AnnotationExpr annotation, boolean isPrimary) {
-        // JPA에서 기본적으로 false로 설정하기 때문이다.
+        // JPA에서 기본적으로 true로 설정하기 때문이다.
         // primitive 타입의 경우, null 지정할 수 없기에 초기값을 지정해야 한다.
-        boolean isUnique = false;
+        boolean nullable = true;
 
         // 상황 1. isPrimary = true
         // @Id로 지정되었으나, @Column 지정되어있지 않을 수 있기에 바로 반환하도록 구현했다.
         if(isPrimary) {
             return new AnnotationSnapshot<>(
                     annotation != null ? annotation.getNameAsString() : "PrimaryKey",
-                    ConstraintType.UNIQUE,
-                    true
+                    ConstraintType.NULLABLE,
+                    false
             );
         }
 
-        // 상황 2. @Column(unique = true)
+        // 상황 2. @Column(nullable = false)
         if(annotation instanceof NormalAnnotationExpr normalAnn){
             for(MemberValuePair pair : normalAnn.getPairs()){
-                if(pair.getNameAsString().equals("unique")){
-                    isUnique = pair.getValue().asBooleanLiteralExpr().getValue();
+                if(pair.getNameAsString().equals("nullable")){
+                    nullable = pair.getValue().asBooleanLiteralExpr().getValue();
                 }
             }
         }
 
         return new AnnotationSnapshot<>(
                 annotation.getNameAsString(),
-                ConstraintType.UNIQUE,
-                isUnique
+                ConstraintType.NULLABLE,
+                nullable
         );
     }
 }
