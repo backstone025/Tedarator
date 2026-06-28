@@ -3,6 +3,8 @@ package com.backstone.tedarator.domain.parsing.service.engine;
 import com.backstone.tedarator.domain.parsing.json.BaseSchemaJson;
 import com.backstone.tedarator.domain.parsing.service.modules.extractor.Extractor;
 import com.backstone.tedarator.domain.parsing.service.modules.extractor.impl.*;
+import com.backstone.tedarator.domain.parsing.service.modules.extractor.policy.CertifyNumberPolicy;
+import com.backstone.tedarator.domain.parsing.service.modules.extractor.policy.CertifyStringOrEnumPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,20 +28,22 @@ class JavaParserEngineTest {
     }
 
     private List<Extractor> createExtractors() {
+        CertifyNumberPolicy certifyNumberPolicy = new CertifyNumberPolicy();
+        CertifyStringOrEnumPolicy certifyStringOrEnumPolicy = new CertifyStringOrEnumPolicy();
         return List.of(
                 // nullable
                 new ColumnNullableExtractor(),
                 // unique
                 new ColumnUniqueExtractor(),
                 // 숫자 범위
-                new LengthMaxExtractor(),
-                new LengthMinExtractor(),
-                new MaxExtractor(),
-                new MinExtractor(),
+                new MaxExtractor(certifyNumberPolicy),
+                new MinExtractor(certifyNumberPolicy),
+                new SizeMaxExtractor(certifyNumberPolicy),
+                new SizeMinExtractor(certifyNumberPolicy),
                 // 문자열 길이
-                new ColumnLengthExtractor(),
-                new SizeMaxExtractor(),
-                new SizeMinExtractor()
+                new ColumnLengthExtractor(certifyStringOrEnumPolicy),
+                new LengthMaxExtractor(certifyStringOrEnumPolicy),
+                new LengthMinExtractor(certifyStringOrEnumPolicy)
         );
     }
 
