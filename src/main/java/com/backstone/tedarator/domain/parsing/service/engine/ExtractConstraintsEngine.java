@@ -59,8 +59,8 @@ public class ExtractConstraintsEngine {
     /**
      * 어노테이션으로부터 추출한 제약 조건들을 정제하고 저장하기 좋은 형태로 변환하는 메소드
      *
-     * @param snapshots
-     * @return
+     * @param snapshots 정제할 어노테이션 스냅샷들
+     * @return 한 필드에 대한 최종 제약 조건들(JSON)
      */
     public ConstraintsJson FilteringSnapshots(List<AnnotationSnapshot<?>> snapshots) {
         // 존재하는 데이터만 ConstraintType별 동적으로 그룹핑
