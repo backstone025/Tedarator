@@ -7,6 +7,20 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
  * <h1>어노테이션 기반 제약 조건 추출기 (Extractor)</h1>
  * <p>각 어노테이션(예: {@code @Column}, {@code @Min} 등)으로부터 실제 데이터베이스 제약 설정값을 파싱하여
  * {@link AnnotationSnapshot} 형태로 캡슐화하는 공통 인터페이스입니다.</p>
+ * <h2>@todo 구현해야 할 모듈 목록</h2>
+ * <h3>숫자 범위</h3>
+ * <ul>
+ * <li>{@code @Positive}, {@code @PositiveOrZero}</li>
+ * <li>{@code @Negative}, {@code @NegativeOrZero}</li>
+ * <li>{@code @DecimalMin}, {@code @DecimalMax}</li>
+ * <li>{@code @Digits}</li>
+ * </ul>
+ * <h3>문자 형식</h3>
+ * <ul>
+ * <li>{@code @Email}</li>
+ * <li>{@code @Pattern}</li>
+ * <li>{@code @UUID}</li>
+ * </ul>
  * <h2>! 사용 전 주의 사항 !</h2>
  * <ul>
  * <li>{@code isPrimary} 파라미터는 <strong>반드시 실제 {@code @Id} 어노테이션의 존재 여부</strong>로만 판단해 넘겨야 합니다.</li>
