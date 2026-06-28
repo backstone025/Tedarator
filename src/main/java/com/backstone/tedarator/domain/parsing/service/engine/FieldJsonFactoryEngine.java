@@ -4,10 +4,12 @@ package com.backstone.tedarator.domain.parsing.service.engine;
 import com.backstone.tedarator.domain.parsing.json.ConstraintsJson;
 import com.backstone.tedarator.domain.parsing.json.EntityFieldJson;
 import com.backstone.tedarator.domain.parsing.json.ReferenceTargetJson;
-import com.backstone.tedarator.domain.parsing.service.policy.ConstraintsPolicy;
+import com.backstone.tedarator.domain.parsing.service.modules.snapshot.AnnotationSnapshot;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 /**
  * <H1>EntityFieldJson 팩토리 엔진</H1>
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class FieldJsonFactoryEngine {
+    private final ExtractConstraintsEngine extractConstraintsEngine;
 
     public EntityFieldJson generateEntityFieldJson(FieldDeclaration field) {
         VariableDeclarator variableDeclarator = field.getVariable(0);
@@ -31,25 +34,15 @@ public class FieldJsonFactoryEngine {
                 || field.isAnnotationPresent("JoinColumn");
 
         // 참조 세부 정보는 JavaParserEngine에서 처리한다.
+        // 모든 엔티티 메타 정보 추출 후 연관관계 분석하며 채워질 부분이댜.
         ReferenceTargetJson referenceTarget = null;
 
         // [제약 사항들 판별]
-        // nullable
-        Boolean nullable = null;
+        // 필드에서 어노테이션 스냅샷들 수집
+        List<AnnotationSnapshot<?>> snapshots = extractConstraintsEngine.collectSnapshots(field, isPrimary);
 
-        // unique
-        Boolean isUnique = null;
-
-        // min, max value
-        Integer minValue = null;
-        Integer maxValue = null;
-
-        // min, max length
-        Integer minLength = null;
-        Integer maxLength = null;
-
-        // 제약 사항 묶기
-        ConstraintsJson constraints = new ConstraintsJson(nullable, isUnique, minValue, maxValue, minLength, maxLength);
+        // 수집한 수냅샷 정제처리하여 제약 사항 확립
+        ConstraintsJson constraints = extractConstraintsEngine.FilteringSnapshots(snapshots);
 
         return new EntityFieldJson(name, type, isPrimary, isForeign, referenceTarget, constraints);
     }

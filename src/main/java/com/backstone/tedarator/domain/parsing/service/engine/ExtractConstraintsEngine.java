@@ -17,7 +17,6 @@ import java.util.Map;
 public class ExtractConstraintsEngine {
     // 생성자 주입으로 제약 추출에 사용할 Extractor 모듈, constraints 불러오기
     private final List<Extractor> extractors;
-    private final List<ConstraintType> constraints;
 
     /**
      * 필드로부터 어노테이션 스냅삽(제약 사항 정보) 수집하는 로직
