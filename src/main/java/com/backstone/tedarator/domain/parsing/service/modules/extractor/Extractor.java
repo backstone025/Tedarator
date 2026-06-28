@@ -2,6 +2,7 @@ package com.backstone.tedarator.domain.parsing.service.modules.extractor;
 
 import com.backstone.tedarator.domain.parsing.service.modules.snapshot.AnnotationSnapshot;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.type.Type;
 
 /**
  * <h1>어노테이션 기반 제약 조건 추출기 (Extractor)</h1>
@@ -25,6 +26,8 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
  * <ul>
  * <li>{@code isPrimary} 파라미터는 <strong>반드시 실제 {@code @Id} 어노테이션의 존재 여부</strong>로만 판단해 넘겨야 합니다.</li>
  * <li>필드 이름이 단순히 "id"인 경우는 주키(PK) 조건 충족으로 인정하지 않으므로 주의하십시오.</li>
+ * <li>{@code supports()}를 오버라이딩 할 경우, <strong>반드시 하나만 골라</strong> 사용하십시오.(어느 하나라도 true 반환하면 참으로 동작합니다.)</li>
+ * <li>{@code extract()}를 오버라이딩 할 경우 <strong>반드시 하나만 골라</strong> 사용하십시오.(여러 개 구현해도 하나만 동작됩니다.)</li>
  * </ul>
  * <h2>메서드 상세 설명</h2>
  * <ul>
@@ -37,11 +40,11 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
  * <p>-> {@code ColumnLengthExtractor}</p>
  */
 public interface Extractor {
-    default boolean supports(AnnotationExpr annotation) {
+    default boolean supports(AnnotationExpr annotation, Type fieldType) {
         return false;
     }
 
-    default boolean supports(AnnotationExpr annotation, boolean isPrimary) {
+    default boolean supports(AnnotationExpr annotation, boolean isPrimary, Type fieldType) {
         return false;
     }
 
@@ -49,7 +52,7 @@ public interface Extractor {
         return null;
     }
 
-    default AnnotationSnapshot<?> extract(AnnotationExpr annotation, boolean isPrimary) {
+    default AnnotationSnapshot<?> extract(AnnotationExpr annotation, boolean isPrimary, Type fieldType) {
         return null;
     }
 }

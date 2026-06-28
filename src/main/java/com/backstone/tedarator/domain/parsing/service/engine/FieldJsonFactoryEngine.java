@@ -7,6 +7,7 @@ import com.backstone.tedarator.domain.parsing.json.ReferenceTargetJson;
 import com.backstone.tedarator.domain.parsing.service.modules.snapshot.AnnotationSnapshot;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.type.Type;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class FieldJsonFactoryEngine {
         String type = variableDeclarator.getTypeAsString();
 
         // [주키(PK) 판별] : Id(주키), EmbeddedId(복합키)
-        Boolean isPrimary = field.isAnnotationPresent("Id") || field.isAnnotationPresent("EmbeddedId");
+        boolean isPrimary = field.isAnnotationPresent("Id") || field.isAnnotationPresent("EmbeddedId");
 
         // [외래키(FK) 판별] : JPA 연관관계 어노테이션 존재하는지 판별
         Boolean isForeign = field.isAnnotationPresent("ManyToOne")
@@ -38,8 +39,10 @@ public class FieldJsonFactoryEngine {
         ReferenceTargetJson referenceTarget = null;
 
         // [제약 사항들 판별]
+        // 해당 필드가 어떤 타입인지 추가 조사
+        Type fieldType = field.getElementType();
         // 필드에서 어노테이션 스냅샷들 수집
-        List<AnnotationSnapshot<?>> snapshots = extractConstraintsEngine.collectSnapshots(field, isPrimary);
+        List<AnnotationSnapshot<?>> snapshots = extractConstraintsEngine.collectSnapshots(field, isPrimary, fieldType);
 
         // 수집한 수냅샷 정제처리하여 제약 사항 확립
         ConstraintsJson constraints = extractConstraintsEngine.FilteringSnapshots(snapshots);

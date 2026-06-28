@@ -6,6 +6,7 @@ import com.backstone.tedarator.domain.parsing.service.modules.snapshot.Annotatio
 import com.backstone.tedarator.domain.parsing.service.modules.snapshot.ConstraintType;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.type.Type;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -25,16 +26,16 @@ public class ExtractConstraintsEngine {
      * @param isPrimary 해당 필드가 PK인지 여부
      * @return 해당 필드에서 조사한 어노테이션 스냅삽 리스트
      */
-    public List<AnnotationSnapshot<?>> collectSnapshots(FieldDeclaration field, Boolean isPrimary) {
+    public List<AnnotationSnapshot<?>> collectSnapshots(FieldDeclaration field, boolean isPrimary, Type fieldType) {
         List<AnnotationSnapshot<?>> snapshots = new ArrayList<>();
         // 필드에 선언된 어노테이션들 순회(N)
         for (AnnotationExpr annotation : field.getAnnotations()) {
             // 등록된 모든 Extractor 모듈들을 순회(M)
             for (Extractor extractor : extractors) {
                 // 추출기가 해당 어노테이션 파싱할 수 있는가?
-                if (extractor.supports(annotation) || extractor.supports(annotation, isPrimary)) {
+                if (extractor.supports(annotation, fieldType) || extractor.supports(annotation, isPrimary, fieldType)) {
                     // 스냅샵 추출 시도
-                    AnnotationSnapshot<?> snapshot = extract(extractor, annotation, isPrimary);
+                    AnnotationSnapshot<?> snapshot = extract(extractor, annotation, isPrimary, fieldType);
                     // 최종 결과가 null아닐 경우
                     if (snapshot != null) {
                         snapshots.add(snapshot);
@@ -45,14 +46,15 @@ public class ExtractConstraintsEngine {
         return snapshots;
     }
 
-    private AnnotationSnapshot<?> extract(Extractor extractor, AnnotationExpr annotation, boolean isPrimary) {
-        // PK 포함해 스냅샷 추출 시도
-        AnnotationSnapshot<?> snapshotWithPrimary = extractor.extract(annotation, isPrimary);
-        // 만일 PK포함한 추출 결과가 비어있을 경우 -> 기본 추출 시도
-        if (snapshotWithPrimary == null) {
-            return extractor.extract(annotation);
+    private AnnotationSnapshot<?> extract(Extractor extractor, AnnotationExpr annotation, boolean isPrimary, Type fieldType) {
+        // PK와 primitive type 포함해 스냅샷 추출 시도
+        AnnotationSnapshot<?> snapshotWithPrimaryAndPrimitive = extractor.extract(annotation, isPrimary, fieldType);
+        if (snapshotWithPrimaryAndPrimitive != null) {
+            return snapshotWithPrimaryAndPrimitive;
         }
-        return snapshotWithPrimary;
+        // 만일 PK포함한 추출 결과가 비어있을 경우 -> 기본 추출 시도
+        return extractor.extract(annotation);
+
     }
 
     /**
